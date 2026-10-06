@@ -2,7 +2,7 @@
 
 ## Context
 
-`tmux-review-queue` is a sibling of `multi-sessionizer` in this repo. multi-sessionizer is Python 3.12 / uv / PyYAML with a layered layout: pure `domain/`, `app/` flows, and `infrastructure/` (subprocess, config, sqlite). Its public CLI exposes `multi-sessionizer external add <yaml-string>`, which accepts a **named group** (`name` + `sessions`) whose members are inline tmuxp workspaces; such groups surface in its interactive fzf as `[group] <name>` and are provisioned via tmuxp when selected. See proposal.md for the motivation.
+`tmux-review-queue` is a sibling of `multi-sessionizer` in this repo. multi-sessionizer is Python 3.12 / uv / PyYAML with a layered layout: pure `domain/`, `app/` flows, and `infrastructure/` (subprocess, config, sqlite). Its public CLI exposes `multi-sessionizer external add <yaml-string>`, which accepts a **named group** (`name` + `tags` + `sessions`) whose members are inline tmuxp workspaces; such groups surface in its interactive fzf as `[external] [<task-id>] <name>` and are provisioned via tmuxp when selected. See proposal.md for the motivation.
 
 ## Goals / Non-Goals
 

@@ -45,7 +45,7 @@ The system SHALL register each accepted task with multi-sessionizer as a named e
 
 #### Scenario: Group appears in the picker
 - **WHEN** the user later opens multi-sessionizer's interactive picker
-- **THEN** the registered task is listed under `[group] <task_id>·<slug(description)>` and selecting it provisions the review sessions
+- **THEN** the registered task is listed under `[external] [<task_id>] <name>` (the task id as a picker tag) and selecting it provisions the review sessions
 
 ### Requirement: Review workspace generation
 The system SHALL generate one inline tmuxp workspace per repository with `start_directory` set to the repository path, a single window named `diff` running `nvim +'DiffviewOpen <base>..<ref>'`, and a `session_name` that includes the task id, the repository name, and a slug of the description. The system SHALL NOT run any git checkout or branch-switching command.

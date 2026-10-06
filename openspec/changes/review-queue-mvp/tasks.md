@@ -17,7 +17,7 @@
 - [x] 3.1 Implement `slug()` that preserves unicode letters (Cyrillic kept, no transliteration), replaces whitespace and `/:\\"\`'` plus other tmux-hostile chars with `-`, collapses repeats, and truncates to ~40 chars; verify tests cover Cyrillic preservation, hostile-char replacement, collapse, and truncation
 - [x] 3.2 Implement `group_name(task)` returning `f"{task.id}·{slug(task.description)}"` and `session_name(repo, task)` returning `f"{task.id}·{repo.name}·{slug(task.description)}"`; verify unit tests assert the exact expected strings including the `·` separator
 - [x] 3.3 Implement `workspace_yaml(repo, task)` producing an inline tmuxp workspace (session_name, start_directory = repo path, single window `diff` running `nvim +'DiffviewOpen <base>..<ref>'`) as a YAML string; verify tests assert the parsed YAML fields and that no `git checkout`/`git switch` command appears anywhere
-- [x] 3.4 Implement `group_yaml(task)` producing the `{name, sessions: [workspace-yaml...]}` group document YAML with one workspace member per repo; verify a test round-trips it through `yaml.safe_load` and asserts the group name and member count
+- [x] 3.4 Implement `group_yaml(task)` producing the `{name, tags: [<task_id>], sessions: [workspace-yaml...]}` group document YAML with one workspace member per repo; verify a test round-trips it through `yaml.safe_load` and asserts the group name, the task-id tag, and member count
 
 ## 4. Infrastructure and app flow
 

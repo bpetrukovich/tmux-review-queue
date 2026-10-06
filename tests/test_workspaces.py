@@ -67,6 +67,12 @@ def test_group_yaml_round_trips_name_and_member_count():
     assert len(data["sessions"]) == 2
 
 
+def test_group_yaml_tags_carries_task_id():
+    task = two_repo_task()
+    data = yaml.safe_load(group_yaml(task))
+    assert data["tags"] == ["rev-3"]
+
+
 def test_group_yaml_members_are_workspace_documents():
     task = two_repo_task()
     data = yaml.safe_load(group_yaml(task))

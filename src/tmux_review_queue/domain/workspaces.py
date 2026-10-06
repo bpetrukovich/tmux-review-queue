@@ -30,13 +30,15 @@ def workspace_yaml(repo: Repo, task: Task) -> str:
 
 
 def group_yaml(task: Task) -> str:
-    """Group document ``{name, sessions: [workspace-yaml...]}`` as YAML.
+    """Group document ``{name, tags, sessions: [workspace-yaml...]}`` as YAML.
 
     The ``sessions`` list holds one inline tmuxp workspace per repository, which
-    is how multi-sessionizer stores named group members.
+    is how multi-sessionizer stores named group members. ``tags`` carries the
+    task id so the picker renders it as ``[external] [<id>] <name>``.
     """
     group = {
         "name": group_name(task),
+        "tags": [task.id],
         "sessions": [workspace_yaml(repo, task) for repo in task.repos],
     }
     return yaml.safe_dump(group, sort_keys=False, allow_unicode=True, width=1000)

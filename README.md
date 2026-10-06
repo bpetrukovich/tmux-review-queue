@@ -76,7 +76,8 @@ Each repo becomes one inline tmuxp workspace: a single `diff` window running
 `nvim +'DiffviewOpen <base>..<ref>'` with `start_directory` set to the repo
 path. The workspaces are registered with multi-sessionizer as a named group;
 multi-sessionizer's interactive picker then lists it as
-`[group] <id>·<slug>` and, when selected, provisions the tmux sessions. No git
+`[external] [<id>] <name>` (the task id as a picker tag) and, when selected,
+provisions the tmux sessions. No git
 checkout or branch-switching command is ever issued.
 
 ### Duplicate group names
@@ -96,6 +97,12 @@ left unchanged.
 
 The opencode skill that teaches an agent how to register review requests lives in
 [`.opencode/skills/register-review-task/`](.opencode/skills/register-review-task/SKILL.md).
+
+To install it for every agent, copy it to the user-level skills directory:
+
+```bash
+cp -r .opencode/skills/register-review-task ~/.config/opencode/skills/
+```
 
 ## Development
 

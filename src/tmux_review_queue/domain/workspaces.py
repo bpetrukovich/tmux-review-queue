@@ -22,7 +22,9 @@ def workspace_yaml(repo: Repo, task: Task) -> str:
         "windows": [
             {
                 "window_name": "diff",
-                "shell_command": f"nvim +'DiffviewOpen {repo.base}..{repo.ref}'",
+                "panes": [
+                    {"shell_command": f"nvim +'DiffviewOpen {repo.base}..{repo.ref}'"}
+                ],
             }
         ],
     }

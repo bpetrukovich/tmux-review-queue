@@ -31,7 +31,7 @@ def test_workspace_yaml_fields():
     assert data["session_name"] == session_name(repo, task)
     assert data["start_directory"] == "/repos/backend"
     assert [w["window_name"] for w in data["windows"]] == ["diff"]
-    assert data["windows"][0]["shell_command"] == "nvim +'DiffviewOpen main..feature/x'"
+    assert data["windows"][0]["panes"][0]["shell_command"] == "nvim +'DiffviewOpen main..feature/x'"
 
 
 def test_workspace_yaml_uses_repo_specific_diff_range():
@@ -39,7 +39,7 @@ def test_workspace_yaml_uses_repo_specific_diff_range():
     repo = task.repos[1]
     data = yaml.safe_load(workspace_yaml(repo, task))
     assert data["start_directory"] == "/repos/frontend"
-    assert data["windows"][0]["shell_command"] == "nvim +'DiffviewOpen release/1.0..HEAD'"
+    assert data["windows"][0]["panes"][0]["shell_command"] == "nvim +'DiffviewOpen release/1.0..HEAD'"
 
 
 def test_workspace_yaml_never_checks_out_or_switches():
@@ -80,7 +80,7 @@ def test_group_yaml_members_are_workspace_documents():
         ws = yaml.safe_load(member)
         assert isinstance(ws, dict)
         assert ws["windows"][0]["window_name"] == "diff"
-        assert ws["windows"][0]["shell_command"].startswith("nvim +'DiffviewOpen ")
+        assert ws["windows"][0]["panes"][0]["shell_command"].startswith("nvim +'DiffviewOpen ")
 
 
 def test_group_yaml_one_member_per_repo():

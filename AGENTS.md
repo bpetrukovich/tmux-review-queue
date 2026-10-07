@@ -20,3 +20,7 @@ config, and data store are never modified or read directly.
 
 Domain (`src/tmux_review_queue/domain/`) must stay free of subprocess,
 filesystem, and environment access.
+
+## Acceptance criteria
+
+Please ensure user has always installed the latest version of this tool in path

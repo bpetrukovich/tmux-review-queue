@@ -11,9 +11,11 @@ from __future__ import annotations
 import sys
 from collections.abc import Sequence
 
+from .app.configuration import ConfigError, ConfigNotFoundError
 from .app.flows import add_flow
 from .app.ports import FlowDeps
-from .infrastructure.messages import ConsoleMessageOutput
+from .infrastructure.config_loader import load_config
+from .infrastructure.messages import CONFIG_EXAMPLE, ConsoleMessageOutput
 from .infrastructure.runner import MultiSessionizerRunner
 
 USAGE = """\
@@ -46,15 +48,15 @@ def _error(msg: str) -> None:
 
 
 def default_deps() -> FlowDeps:
-    """Composition root: real runner and console message output."""
+    """Composition root: real runner, console output, and loaded config."""
     return FlowDeps(
         runner=MultiSessionizerRunner(),
         messages=ConsoleMessageOutput(),
+        config=load_config(),
     )
 
 
 def _add_dispatch(args: Sequence[str], deps: FlowDeps | None = None) -> int:
-    deps = deps or default_deps()
     file_path: str | None = None
     index = 0
     while index < len(args):
@@ -74,6 +76,8 @@ def _add_dispatch(args: Sequence[str], deps: FlowDeps | None = None) -> int:
             _error(f"unexpected argument: {arg}")
             return 2
         index += 1
+
+    deps = deps or default_deps()
     return add_flow(file_path, deps)
 
 
@@ -89,4 +93,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     if cmd != "add":
         _error(f"unknown command: {cmd}")
         return 2
-    return _add_dispatch(rest)
+    try:
+        return _add_dispatch(rest)
+    except ConfigNotFoundError as exc:
+        print(exc, file=sys.stderr)
+        print(CONFIG_EXAMPLE, file=sys.stderr)
+        return 1
+    except ConfigError as exc:
+        for problem in exc.problems:
+            print(problem, file=sys.stderr)
+        return 1

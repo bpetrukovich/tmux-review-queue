@@ -10,7 +10,10 @@ import io
 import sys
 
 from tmux_review_queue import main as main_module
+from tmux_review_queue.app.configuration import ConfigError, ConfigNotFoundError, ReviewConfig
 from tmux_review_queue.app.ports import MszResult
+
+TEST_CONFIG = ReviewConfig(command="git diff {base} {ref}")
 
 
 def test_help_prints_usage_and_exits_zero(capsys):
@@ -61,6 +64,7 @@ def test_add_with_file_runs_flow(tmp_path, monkeypatch, capsys):
         lambda: main_module.FlowDeps(
             runner=FakeRunner(MszResult(stdout="added\n", stderr="", exit_code=0)),
             messages=main_module.ConsoleMessageOutput(),
+            config=TEST_CONFIG,
         ),
     )
     assert main_module.main(["add", "--file", str(path)]) == 0
@@ -83,6 +87,7 @@ def test_add_dash_reads_stdin(monkeypatch, capsys):
         lambda: main_module.FlowDeps(
             runner=FakeRunner(MszResult(stdout="added\n", stderr="", exit_code=0)),
             messages=main_module.ConsoleMessageOutput(),
+            config=TEST_CONFIG,
         ),
     )
     assert main_module.main(["add", "-"]) == 0
@@ -95,3 +100,36 @@ class FakeRunner:
 
     def run(self, group_yaml):
         return self.result
+
+
+# --- config errors (exit 1) ---------------------------------------------------
+
+
+def test_add_missing_config_prints_skeleton_and_exits_one(monkeypatch, capsys):
+    def missing(*args, **kwargs):
+        raise ConfigNotFoundError("tmux-review-queue: error: config not found")
+
+    monkeypatch.setattr(main_module, "default_deps", missing)
+    assert main_module.main(["add"]) == 1
+    err = capsys.readouterr().err
+    assert "config not found" in err
+    assert "[review]" in err
+    assert "{base}" in err
+
+
+def test_add_config_error_prints_problems_and_exits_one(monkeypatch, capsys):
+    def broken(*args, **kwargs):
+        raise ConfigError(["tmux-review-queue: error: bad placeholder"])
+
+    monkeypatch.setattr(main_module, "default_deps", broken)
+    assert main_module.main(["add"]) == 1
+    assert "bad placeholder" in capsys.readouterr().err
+
+
+def test_add_help_works_without_config(monkeypatch, capsys):
+    def missing(*args, **kwargs):
+        raise ConfigNotFoundError("tmux-review-queue: error: config not found")
+
+    monkeypatch.setattr(main_module, "default_deps", missing)
+    assert main_module.main(["add", "--help"]) == 0
+    assert "usage: tmux-review-queue add" in capsys.readouterr().out

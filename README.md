@@ -34,7 +34,27 @@ cat task.json | tmux-review-queue add -
 `add` reads a single JSON task document from `--file PATH` or, with `-`, from
 stdin. The document is validated before anything is registered — an invalid
 document registers nothing and exits 1. Invoking the command without any input
-is a usage error (exit 2).
+is a usage error (exit 2). A valid configuration file is required (see below).
+
+## Configuration
+
+`add` requires a TOML config file at `~/.config/tmux-review-queue/config.toml`.
+The path can be overridden with the `TMUX_REVIEW_QUEUE_CONFIG` environment
+variable. When the file is missing, unreadable, or invalid, the command prints
+an example skeleton and exits 1 without registering anything.
+
+```toml
+[review]
+command = "nvim +'DiffviewOpen {base}..{ref}'"
+```
+
+- `[review].command` (required, non-empty): the review command template. It must
+  contain **both** `{base}` and `{ref}` placeholders and no other `{...}`
+  placeholder. Unknown placeholders are rejected.
+- `{base}` and `{ref}` are substituted per repository from the task document —
+  the only supported placeholders. Empty `{}` sequences are left as-is.
+- The example above is a template: change the command to your diff tool of
+  choice (the skeleton is a hint, not a default).
 
 ### Payload schema (AI-facing)
 
@@ -72,13 +92,13 @@ and truncates to ~40 chars. The `·` separator keeps the label readable.
 
 ### What happens
 
-Each repo becomes one inline tmuxp workspace: a single `diff` window running
-`nvim +'DiffviewOpen <base>..<ref>'` with `start_directory` set to the repo
-path. The workspaces are registered with multi-sessionizer as a named group;
-multi-sessionizer's interactive picker then lists it as
-`[external] [<id>] <name>` (the task id as a picker tag) and, when selected,
-provisions the tmux sessions. No git
-checkout or branch-switching command is ever issued.
+Each repo becomes one inline tmuxp workspace: a single `diff` window running the
+configured review command with `{base}`/`{ref}` substituted from the repo
+(`start_directory` is set to the repo path). The workspaces are registered with
+multi-sessionizer as a named group; multi-sessionizer's interactive picker then
+lists it as `[external] [<id>] <name>` (the task id as a picker tag) and, when
+selected, provisions the tmux sessions. No git checkout or branch-switching
+command is ever issued.
 
 ### Duplicate group names
 

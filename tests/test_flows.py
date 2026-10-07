@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import io
 
+from tmux_review_queue.app.configuration import ReviewConfig
 from tmux_review_queue.app.flows import DUPLICATE_HINT, add_flow
 from tmux_review_queue.app.ports import FlowDeps, MszResult
 
@@ -41,7 +42,11 @@ class FakeMessages:
 
 
 def deps(result: MszResult):
-    return FlowDeps(runner=FakeRunner(result), messages=FakeMessages())
+    return FlowDeps(
+        runner=FakeRunner(result),
+        messages=FakeMessages(),
+        config=ReviewConfig(command="git diff {base} {ref}"),
+    )
 
 
 def stdin_for(text: str):

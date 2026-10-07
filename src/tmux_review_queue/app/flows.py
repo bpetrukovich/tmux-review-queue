@@ -42,7 +42,7 @@ def add_flow(file_path: str | None, deps: FlowDeps, stdin: TextIO | None = None)
             deps.messages.error(f"tmux-review-queue: error: {problem}")
         return 1
 
-    result = deps.runner.run(group_yaml(task))
+    result = deps.runner.run(group_yaml(task, deps.config.command))
     if result.exit_code == 0:
         deps.messages.registered(group_name(task))
         return 0

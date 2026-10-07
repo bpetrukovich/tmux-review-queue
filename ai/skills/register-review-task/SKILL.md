@@ -5,8 +5,7 @@ description: Register a review request for completed work across one or more rep
 
 Register a review request so the user can review the work in one go. Use this
 whenever you finished parallel work across several branches or repositories and
-the user wants it reviewed — for example "please review this", "open a review
-of the changes", or "queue a review for the work I just landed".
+the user wants it reviewed.
 
 ## How to register a review
 
@@ -24,7 +23,7 @@ cat /tmp/review-request.json | tmux-review-queue add -
 
 ```json
 {
-  "id": "rev-1",
+  "id": "pp-xxxxxx",
   "description": "Review the parallel work",
   "repos": [
     { "name": "backend", "path": "/home/u/work/backend", "ref": "feature/x", "base": "main" },
@@ -33,24 +32,15 @@ cat /tmp/review-request.json | tmux-review-queue add -
 }
 ```
 
-- `id` — required, non-empty. A stable identifier for the review; use it as the identity of the request.
+- `id` — required, non-empty. A stable identifier for the task.
 - `description` — required, non-empty. The human label; a slug of it is embedded in the generated names.
 - `repos` — required, non-empty. One entry per repository, each requiring a non-empty `name`, `path`, `ref`, and `base`.
 - `ref` is the revision **under review** (what the user is asked to look at); `base` is the comparison base (what it is compared against). Both accept **any git revision string**: a branch, a tag, a commit hash, or `HEAD`.
-- `path` must be the absolute path of a local clone of the repository.
+- `path` must be the absolute path of a local clone of the repository (can be worktree).
 
 The tool does not validate that the revisions exist and never changes any
 working tree. Make sure each repository already has the reviewed revision
 available; the diff range is resolved when the review is opened.
-
-## Naming rules
-
-- The review request is shown under the name `<id>·<slug(description)>`.
-- Each repository inside the request is named `<id>·<repo_name>·<slug(description)>`.
-
-The slug keeps unicode letters — **Cyrillic is preserved, no transliteration** —
-replaces whitespace and hostile characters with `-`, collapses repeats, and
-truncates to ~40 chars. The separator is the middle dot `·`.
 
 ## Exit codes
 
@@ -67,6 +57,7 @@ and exits 1. Existing requests are never replaced or deleted.
 
 To re-register a review (e.g. with an updated diff range), **change the `id` or
 the `description`** so the generated name differs, then submit again.
+Generally it's better to change the `description` than the `id`.
 
 ## Worked example
 

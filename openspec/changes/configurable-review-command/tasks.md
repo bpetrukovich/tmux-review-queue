@@ -16,8 +16,8 @@
 - [x] 3.1 Implement `load_config(path=None) -> ReviewConfig` in new `infrastructure/config_loader.py` (tomllib; `TMUX_REVIEW_QUEUE_CONFIG` env override of `~/.config/tmux-review-queue/config.toml`; missing file → `ConfigNotFoundError`, invalid TOML → `ConfigError`, then domain `validate_command`); verify `tests/test_config_loader.py` covers default path, env override, missing file, invalid TOML, each validation failure, and a valid file
 - [x] 3.2 Add `CONFIG_EXAMPLE` skeleton (with a `[review].command` containing both placeholders) to `infrastructure/messages.py`; verify it passes `validate_command` in `tests/test_messages.py`
 - [x] 3.3 Wire config loading into `main.py` `_add_dispatch`/`default_deps`: missing config → skeleton + exit 1, config error → problems + exit 1, `--help` works without a config; verify updated `tests/test_main.py` covers all three
-- [ ] 3.4 Document the config file, env override, and placeholder rules in README.md; verify the documented example passes `validate_command`
+- [x] 3.4 Document the config file, env override, and placeholder rules in README.md; verify the documented example passes `validate_command`
 
 ## 4. Integration verification
 
-- [ ] 4.1 Run `.venv/bin/python -m pytest -q`, `.venv/bin/ruff check .`, and `.venv/bin/ruff format . --check`; verify the whole suite and linters are green
+- [x] 4.1 Run `.venv/bin/python -m pytest -q`, `.venv/bin/ruff check .`, and `.venv/bin/ruff format . --check`; verify the whole suite and linters are green
